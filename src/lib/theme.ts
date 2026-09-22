@@ -1,0 +1,46 @@
+export const colors = {
+  page: '#f7f5f0',
+  pinned: '#f2efe8',
+  ink: '#1c1a17',
+  inkOnDark: '#f7f5f0',
+  white: '#ffffff',
+  hairline: 'rgba(28,26,23,.07)',
+  hairlineStrong: 'rgba(28,26,23,.12)',
+  hairlineDashed: 'rgba(28,26,23,.22)',
+  fieldBorder: 'rgba(28,26,23,.1)',
+  cardBorder: 'rgba(28,26,23,.08)',
+  fill: 'rgba(28,26,23,.07)',
+  fillLight: 'rgba(28,26,23,.06)',
+  cardBg: 'rgba(28,26,23,.04)',
+  heldBg: 'rgba(28,26,23,.025)',
+  muted28: 'rgba(28,26,23,.28)',
+  muted35: 'rgba(28,26,23,.35)',
+  muted38: 'rgba(28,26,23,.38)',
+  muted40: 'rgba(28,26,23,.4)',
+  muted45: 'rgba(28,26,23,.45)',
+  muted55: 'rgba(28,26,23,.55)',
+  muted60: 'rgba(28,26,23,.6)',
+  onDarkMuted: 'rgba(247,245,240,.5)',
+  onDarkTrack: 'rgba(247,245,240,.22)',
+  green: '#3f7a5a',
+  greenLight: '#8fc4a8',
+  red: '#a24b3c',
+  redLight: '#e2a396',
+} as const;
+
+export const fonts = {
+  sans400: 'InstrumentSans_400Regular',
+  sans500: 'InstrumentSans_500Medium',
+  sans600: 'InstrumentSans_600SemiBold',
+  mono400: 'IBMPlexMono_400Regular',
+  mono500: 'IBMPlexMono_500Medium',
+} as const;
+
+export const radii = {
+  input: 9,
+  button: 11,
+  card: 12,
+  exportCard: 14,
+  circleSmall: 17,
+  circleLarge: 19,
+} as const;

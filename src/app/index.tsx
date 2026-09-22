@@ -1,98 +1,78 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from 'react';
+import { KeyboardAvoidingView, Platform, StatusBar, StyleSheet, View } from 'react-native';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { TabBar, TabId } from '@/components/ledger/tab-bar';
+import { colors } from '@/lib/theme';
+import { LedgerScreen } from '@/screens/ledger-screen';
+import { SettingsScreen } from '@/screens/settings-screen';
+import { ShareScreen } from '@/screens/share-screen';
+import { YearScreen } from '@/screens/year-screen';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
+export default function App() {
+  const now = new Date();
+  const [tab, setTab] = useState<TabId>('ledger');
+  const [y, setY] = useState(now.getFullYear());
+  const [m, setM] = useState(now.getMonth());
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
+  function shiftMonth(delta: number) {
+    setM((prevM) => {
+      let nextM = prevM + delta;
+      let nextY = y;
+      if (nextM > 11) {
+        nextM = 0;
+        nextY += 1;
+      } else if (nextM < 0) {
+        nextM = 11;
+        nextY -= 1;
+      }
+      setY(nextY);
+      return nextM;
+    });
   }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
+
+  const content = (
+    <>
+      <StatusBar barStyle="dark-content" />
+
+      {tab === 'ledger' && <LedgerScreen y={y} m={m} onShiftMonth={shiftMonth} />}
+      {tab === 'year' && (
+        <YearScreen
+          y={y}
+          onShiftYear={(delta) => setY((prev) => prev + delta)}
+          onOpenMonth={(mi) => {
+            setM(mi);
+            setTab('ledger');
+          }}
+        />
+      )}
+      {tab === 'share' && (
+        <ShareScreen y={y} m={m} onShiftMonth={shiftMonth} onOpenSettings={() => setSettingsOpen(true)} />
+      )}
+
+      <TabBar active={tab} onSelect={setTab} />
+
+      <SettingsScreen visible={settingsOpen} y={y} m={m} onClose={() => setSettingsOpen(false)} />
+    </>
   );
-}
 
-export default function HomeScreen() {
+  // Browsers already resize the viewport around the on-screen keyboard, so
+  // KeyboardAvoidingView is native-only — on web its wrapper view doesn't
+  // stretch to fill height, breaking the pinned entry bar / tab bar layout.
+  if (Platform.OS === 'web') {
+    return <View style={styles.container}>{content}</View>;
+  }
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      {content}
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+    backgroundColor: colors.page,
   },
 });
