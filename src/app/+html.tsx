@@ -9,9 +9,9 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
         <title>Ledger</title>
 
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/favicon.png" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="manifest.json" />
+        <link rel="icon" href="favicon.png" />
+        <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
         <meta name="theme-color" content="#f7f5f0" />
         <meta name="mobile-web-app-capable" content="yes" />
